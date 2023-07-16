@@ -29,7 +29,7 @@ namespace mut
 
 
     /// mut_rate is the chance of mutation upon reproduction
-    double mut_rate{0.0316};
+    double mut_rate{0.00316};
     double m{0};
     double sd{0.02};
 
@@ -53,13 +53,13 @@ namespace mut
 
     // save simulation at set time points.
     const bool savestates{true};
-    const long savet{20000};
+    const long savet{10000};
     //load from a save state
     const bool loadstate{false};
     const string SaveName{"1000ss40000.dat"};
 
     ///returns on cooperation
-    float alpha{1.03};
+    float alpha{0.9};
 
     ///returns on personal reproduction
     constexpr float beta{1.0};
@@ -91,9 +91,9 @@ namespace mut
 
 
     bool choose_start{true};
-    double a_pg{0.01};
-    double a_switch{0.3};
-    double b_pg{0.4};
+    double a_pg{0.24};
+    double a_switch{0.27};
+    double b_pg{0.47};
     double b_switch{0.0005};   
     
     constexpr bool start_broken_frequencies{false};
