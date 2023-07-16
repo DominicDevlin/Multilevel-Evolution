@@ -29,12 +29,12 @@ namespace mut
 
 
     /// mut_rate is the chance of mutation upon reproduction
-    double mut_rate{0.01};
+    double mut_rate{0.0316};
     double m{0};
     double sd{0.02};
 
     ///the number of cells in an organism required for fission
-    int threshold{562};
+    int threshold{1778};
 
     //starting parameters
     int start_size{mut::threshold / 2};
@@ -49,23 +49,27 @@ namespace mut
     constexpr long time_steps{500000000};
 
     //number of threads
-    const int n_threads{60};
+    const int n_threads{6};
 
     // save simulation at set time points.
     const bool savestates{true};
-    const long savet{10000000};
+    const long savet{20000};
     //load from a save state
     const bool loadstate{false};
     const string SaveName{"1000ss40000.dat"};
 
     ///returns on cooperation
-    constexpr float alpha{1.0};
+    float alpha{1.03};
 
     ///returns on personal reproduction
     constexpr float beta{1.0};
 
     //change the file name to include alpha/beta parameters
     constexpr bool output_returns{false};
+
+    // sweep through alpha instead of mutation rate, used for alpha-V phase.
+    constexpr bool alpha_sweep{true};
+
     
     string al =  to_string(alpha);
     string be = to_string(beta);
@@ -85,11 +89,12 @@ namespace mut
     /// 0 = all traits mutate, 1 = d mutates only, 2 = only dummy mutates, 3 = public good mutate
     constexpr int selection_type{0};
 
+
     bool choose_start{true};
-    double a_pg{0.19};
-    double a_switch{0.33};
-    double b_pg{0.5};
-    double b_switch{0.00005};   
+    double a_pg{0.01};
+    double a_switch{0.3};
+    double b_pg{0.4};
+    double b_switch{0.0005};   
     
     constexpr bool start_broken_frequencies{false};
     
@@ -1631,21 +1636,44 @@ int main(int argc, char *argv[])
     }
     else if (argc > 2)
     {
-        cout << argv[1] << "  " << argv[2] << endl;
-        mut::threshold = stoi(argv[1]);
-        mut::mut_rate = stod(argv[2]);
-        cout << mut::threshold << "  " << mut::mut_rate << endl;
-        string name;
-        for (int i=1;i<argc;++i)
+        if (!mut::alpha_sweep)
         {
-            name += argv[i];
-            if (i < argc - 1)
-                name += "-";
+            cout << argv[1] << "  " << argv[2] << endl;
+            mut::threshold = stoi(argv[1]);
+            mut::mut_rate = stod(argv[2]);
+            cout << mut::threshold << "  " << mut::mut_rate << endl;
+            string name;
+            for (int i=1;i<argc;++i)
+            {
+                name += argv[i];
+                if (i < argc - 1)
+                    name += "-";
+            }
+            cout << name << endl;    
+            mut::output_name = name;
+            mut::start_size = mut::threshold / 2;
+            mut::capacity = mut::array_tc * mut::threshold;
         }
-        cout << name << endl;    
-        mut::output_name = name;
-        mut::start_size = mut::threshold / 2;
-        mut::capacity = mut::array_tc * mut::threshold;
+        else
+        {
+            cout << argv[1] << "  " << argv[2] << endl;
+            mut::threshold = stoi(argv[1]);
+            mut::alpha = stod(argv[2]);
+            mut::mut_rate = 0.01;
+            cout << mut::threshold << "  " << mut::alpha << endl;
+            string name;
+            for (int i=1;i<argc;++i)
+            {
+                name += argv[i];
+                if (i < argc - 1)
+                    name += "-";
+            }
+            cout << name << endl;    
+            mut::output_name = name;
+            mut::start_size = mut::threshold / 2;
+            mut::capacity = mut::array_tc * mut::threshold;            
+        }
+
     }
     else if (argc > 1)
     {
