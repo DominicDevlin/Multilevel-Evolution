@@ -29,12 +29,12 @@ namespace mut
 
 
     /// mut_rate is the chance of mutation upon reproduction
-    double mut_rate{0.00316};
+    double mut_rate{0.01};
     double m{0};
     double sd{0.02};
 
     ///the number of cells in an organism required for fission
-    int threshold{1778};
+    int threshold{10000};
 
     //starting parameters
     int start_size{mut::threshold / 2};
@@ -49,7 +49,7 @@ namespace mut
     constexpr long time_steps{500000000};
 
     //number of threads
-    const int n_threads{6};
+    const int n_threads{10};
 
     // save simulation at set time points.
     const bool savestates{true};
@@ -59,16 +59,19 @@ namespace mut
     const string SaveName{"1000ss40000.dat"};
 
     ///returns on cooperation
-    float alpha{0.9};
+    float alpha{1.0};
 
     ///returns on personal reproduction
-    constexpr float beta{1.0};
+    float beta{1.0};
 
     //change the file name to include alpha/beta parameters
     constexpr bool output_returns{false};
 
     // sweep through alpha instead of mutation rate, used for alpha-V phase.
-    constexpr bool alpha_sweep{true};
+    constexpr bool alpha_sweep{false};
+
+    // sweep through alpha and beta parameters
+    constexpr bool alpha_beta_sweep{true};
 
     
     string al =  to_string(alpha);
@@ -91,10 +94,10 @@ namespace mut
 
 
     bool choose_start{true};
-    double a_pg{0.24};
-    double a_switch{0.27};
-    double b_pg{0.47};
-    double b_switch{0.0005};   
+    double a_pg{0.01};
+    double a_switch{0.4};
+    double b_pg{0.5};
+    double b_switch{0.00005};   
     
     constexpr bool start_broken_frequencies{false};
     
@@ -1636,25 +1639,8 @@ int main(int argc, char *argv[])
     }
     else if (argc > 2)
     {
-        if (!mut::alpha_sweep)
-        {
-            cout << argv[1] << "  " << argv[2] << endl;
-            mut::threshold = stoi(argv[1]);
-            mut::mut_rate = stod(argv[2]);
-            cout << mut::threshold << "  " << mut::mut_rate << endl;
-            string name;
-            for (int i=1;i<argc;++i)
-            {
-                name += argv[i];
-                if (i < argc - 1)
-                    name += "-";
-            }
-            cout << name << endl;    
-            mut::output_name = name;
-            mut::start_size = mut::threshold / 2;
-            mut::capacity = mut::array_tc * mut::threshold;
-        }
-        else
+
+        if (mut::alpha_sweep)
         {
             cout << argv[1] << "  " << argv[2] << endl;
             mut::threshold = stoi(argv[1]);
@@ -1672,6 +1658,44 @@ int main(int argc, char *argv[])
             mut::output_name = name;
             mut::start_size = mut::threshold / 2;
             mut::capacity = mut::array_tc * mut::threshold;            
+        }
+        else if (mut::alpha_beta_sweep)
+        {
+            cout << argv[1] << "  " << argv[2] << endl;
+            mut::alpha = stod(argv[1]);
+            mut::beta = stod(argv[2]);
+            mut::mut_rate = 0.01;
+            mut::threshold = 3162;
+            cout << mut::threshold << "  " << mut::alpha << endl;
+            string name;
+            for (int i=1;i<argc;++i)
+            {
+                name += argv[i];
+                if (i < argc - 1)
+                    name += "-";
+            }
+            cout << name << endl;    
+            mut::output_name = name;
+            mut::start_size = mut::threshold / 2;
+            mut::capacity = mut::array_tc * mut::threshold;
+        }
+        else
+        {
+            cout << argv[1] << "  " << argv[2] << endl;
+            mut::threshold = stoi(argv[1]);
+            mut::mut_rate = stod(argv[2]);
+            cout << mut::threshold << "  " << mut::mut_rate << endl;
+            string name;
+            for (int i=1;i<argc;++i)
+            {
+                name += argv[i];
+                if (i < argc - 1)
+                    name += "-";
+            }
+            cout << name << endl;    
+            mut::output_name = name;
+            mut::start_size = mut::threshold / 2;
+            mut::capacity = mut::array_tc * mut::threshold;
         }
 
     }

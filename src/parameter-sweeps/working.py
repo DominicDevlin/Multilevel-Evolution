@@ -3,8 +3,8 @@ import sys
 import csv
 import math
 
-# what type of simulation, 0 = V, 1 = m * V, 2 = mV * inits
-sim_type = 2
+# what type of simulation, 0 = V, 1 = two variables, 2 = mV * inits
+sim_type = 1
 
 def run_simulation2(threshold, mutation, init):
     kp = init[0]
